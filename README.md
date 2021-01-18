@@ -1,3 +1,3 @@
-# The royal Game of Ur - Play in Terminal
+# Game of Ur
 
-
+The royal Game of Ur as browser game.
