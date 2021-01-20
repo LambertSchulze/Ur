@@ -3,109 +3,77 @@ import './style.css'
 import Board from './components/Board'
 
 const App = () => {
-  const emptyGame = [
-    {
-      position: "1-1",
-      stateAsClass: "cell flower empty"
+  const boardLayout = {
+    11: {
+      type: 'flower'
     },
-    {
-      position: "1-2",
-      stateAsClass: "cell empty"
+    12: {
+      type: 'normal'
     },
-    {
-      position: "1-3",
-      stateAsClass: "cell empty"
+    13: {
+      type: 'normal'
     },
-    {
-      position: "1-4",
-      stateAsClass: "cell empty"
+    14: {
+      type: 'normal'
     },
-    {
-      position: "1-5",
-      stateAsClass: "none"
+    15: {},
+    16: {},
+    17: {
+      type: 'flower'
     },
-    {
-      position: "1-6",
-      stateAsClass: "none"
+    18: {
+      type: 'normal'
     },
-    {
-      position: "1-7",
-      stateAsClass: "cell flower empty"
+    21: {
+      type: 'normal'
     },
-    {
-      position: "1-8",
-      stateAsClass: "cell empty"
+    22: {
+      type: 'normal'
     },
-    {
-      position: "2-1",
-      stateAsClass: "cell empty"
+    23: {
+      type: 'normal'
     },
-    {
-      position: "2-2",
-      stateAsClass: "cell empty"
+    24: {
+      type: 'flower'
     },
-    {
-      position: "2-3",
-      stateAsClass: "cell empty"
+    25: {
+      type: 'normal'
     },
-    {
-      position: "2-4",
-      stateAsClass: "cell flower empty"
+    26: {
+      type: 'normal'
     },
-    {
-      position: "2-5",
-      stateAsClass: "cell empty"
+    27: {
+      type: 'normal'
     },
-    {
-      position: "2-6",
-      stateAsClass: "cell empty"
+    28: {
+      type: 'normal'
     },
-    {
-      position: "2-7",
-      stateAsClass: "cell empty"
+    31: {
+      type: 'flower'
     },
-    {
-      position: "2-8",
-      stateAsClass: "cell empty"
+    32: {
+      type: 'normal'
     },
-    {
-      position: "3-1",
-      stateAsClass: "cell flower empty"
+    33: {
+      type: 'normal'
     },
-    {
-      position: "3-2",
-      stateAsClass: "cell empty"
+    34: {
+      type: 'normal'
     },
-    {
-      position: "3-3",
-      stateAsClass: "cell empty"
+    35: {},
+    36: {},
+    37: {
+      type: 'flower'
     },
-    {
-      position: "3-4",
-      stateAsClass: "cell empty"
-    },
-    {
-      position: "3-5",
-      stateAsClass: "none"
-    },
-    {
-      position: "3-6",
-      stateAsClass: "none"
-    },
-    {
-      position: "3-7",
-      stateAsClass: "cell flower empty"
-    },
-    {
-      position: "3-8",
-      stateAsClass: "cell empty"
+    38: {
+      type: 'normal'
     }
-  ]
+  }
 
   return (
     <div>
       <h1>The Game of Ur</h1>
-      <Board state={emptyGame} />
+      <Board layout={boardLayout} />
     </div>
   )
 }
