@@ -105,7 +105,7 @@ const App = () => {
   return (
     <div>
       <h1>The Game of Ur</h1>
-      <Board state={emptyGame}/>
+      <Board state={emptyGame} />
     </div>
   )
 }

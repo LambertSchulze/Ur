@@ -1,12 +1,10 @@
 import React from 'react'
 
-const Board = ( {state} ) => {
+const Board = ({ state }) => {
 
   return (
     <div id='board'>
-      {state.map(cell =>
-        <div key={cell.position} className={cell.stateAsClass}></div>
-      )}
+      {/*state.map (cell => 'test')*/}
     </div>
   )
 }
