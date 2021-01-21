@@ -76,4 +76,5 @@ test('renders css class names from board layout', () => {
   )
 
   expect(component.container.querySelector('.flower')).toBeDefined()
+  expect(component.container.querySelector('.normal')).toBeDefined()
 })

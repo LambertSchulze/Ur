@@ -2,7 +2,7 @@ import React from 'react'
 
 const Board = ({ layout }) => {
   return (
-    <div id='board'>
+    <div id='Board'>
       <div id="11" className={layout[11].type}></div>
       <div id="12" className={layout[12].type}></div>
       <div id="13" className={layout[13].type}></div>
