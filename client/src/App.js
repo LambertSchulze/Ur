@@ -1,6 +1,6 @@
 import React from 'react'
 import './style.css'
-import Board from './components/Board'
+import MainMenu from './components/MainMenu'
 
 const App = () => {
   const boardLayout = {
@@ -73,7 +73,7 @@ const App = () => {
   return (
     <div>
       <h1>The Game of Ur</h1>
-      <Board layout={boardLayout} />
+      <MainMenu />
     </div>
   )
 }
