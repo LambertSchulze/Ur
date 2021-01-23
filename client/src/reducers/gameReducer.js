@@ -26,7 +26,21 @@ const BOARD_LAYOUT = [
 ]
 const INITIAL_STATE = {
   board: BOARD_LAYOUT,
-  pieces: []
+  pieces: [],
+  player1: {
+    hand: 5,
+    finish: 0,
+    color: 'white'
+  },
+  player2: {
+    hand: 5,
+    finish: 0,
+    color: 'black'
+  },
+  game: {
+    turn: 'player1',
+    roll: []
+  }
 }
 
 const gameReducer = (state = INITIAL_STATE, action) => {
