@@ -1,77 +1,57 @@
-const gameReducer = (state = {}, action) => {
-  return state
-}
-
-export const makeNewGame = () => {
-  return {
-    type: 'NEW_GAME',
-    data: {
-      11: {
-        type: 'flower'
-      },
-      12: {
-        type: 'normal'
-      },
-      13: {
-        type: 'normal'
-      },
-      14: {
-        type: 'normal'
-      },
-      15: {},
-      16: {},
-      17: {
-        type: 'flower'
-      },
-      18: {
-        type: 'normal'
-      },
-      21: {
-        type: 'normal'
-      },
-      22: {
-        type: 'normal'
-      },
-      23: {
-        type: 'normal'
-      },
-      24: {
-        type: 'flower'
-      },
-      25: {
-        type: 'normal'
-      },
-      26: {
-        type: 'normal'
-      },
-      27: {
-        type: 'normal'
-      },
-      28: {
-        type: 'normal'
-      },
-      31: {
-        type: 'flower'
-      },
-      32: {
-        type: 'normal'
-      },
-      33: {
-        type: 'normal'
-      },
-      34: {
-        type: 'normal'
-      },
-      35: {},
-      36: {},
-      37: {
-        type: 'flower'
-      },
-      38: {
-        type: 'normal'
-      }
-    }
+const BOARD_LAYOUT = [
+  {pos: 11, type: 'flower'},
+  {pos: 12, type: 'normal'},
+  {pos: 13, type: 'normal'},
+  {pos: 14, type: 'normal'},
+  {pos: 15, type: 'none'},
+  {pos: 16, type: 'none'},
+  {pos: 17, type: 'flower'},
+  {pos: 18, type: 'normal'},
+  {pos: 21, type: 'normal'},
+  {pos: 22, type: 'normal'},
+  {pos: 23, type: 'normal'},
+  {pos: 24, type: 'flower'},
+  {pos: 25, type: 'normal'},
+  {pos: 26, type: 'normal'},
+  {pos: 27, type: 'normal'},
+  {pos: 28, type: 'normal'},
+  {pos: 31, type: 'flower'},
+  {pos: 32, type: 'normal'},
+  {pos: 33, type: 'normal'},
+  {pos: 34, type: 'normal'},
+  {pos: 35, type: 'none'},
+  {pos: 36, type: 'none'},
+  {pos: 37, type: 'flower'},
+  {pos: 38, type: 'normal'}
+]
+const INITIAL_STATE = {
+  board: BOARD_LAYOUT,
+  pieces: [],
+  player1: {
+    hand: 5,
+    finish: 0,
+    color: 'white'
+  },
+  player2: {
+    hand: 5,
+    finish: 0,
+    color: 'black'
+  },
+  game: {
+    turn: 'player1',
+    roll: []
   }
 }
+
+const gameReducer = (state = INITIAL_STATE, action) => {
+  switch(action.type) {
+    case 'NEW_GAME':
+      return INITIAL_STATE
+    default:
+      return state
+  }
+}
+
+export const makeNewGame = () => {return {type: 'NEW_GAME'}}
 
 export default gameReducer
