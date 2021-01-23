@@ -1,10 +1,10 @@
-#board {
+#Board {
   display: grid;
   grid-template-rows: repeat(3, 100px);
   grid-template-columns: repeat(8, 100px);
 }
 
-#board * {
+#Board * {
   width: 100px;
   height: 100px;
 }
