@@ -64,7 +64,7 @@ const gameReducer = (state = INITIAL_STATE, action) => {
             dice: [0, 0, 0, 0],
             sum: 0
           },
-          turn: 'player1'
+          turn: 'white'
         }
       }
     case 'ROLL_DICE':

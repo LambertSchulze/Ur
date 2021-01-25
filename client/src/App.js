@@ -12,9 +12,9 @@ const App = () => {
       <h1>The Game of Ur</h1>
       <MainMenu />
       <DiceRoll roll={useSelector(state => state.game.roll)} />
-      <Hand player={useSelector(state => state.player1)} />
+      <Hand player={useSelector(state => state.player1)} turn={useSelector(state => state.game.turn)}/>
       <Board boardState={useSelector(state => state)} />
-      <Hand player={useSelector(state => state.player2)} />
+      <Hand player={useSelector(state => state.player2)} turn={useSelector(state => state.game.turn)}/>
     </div>
   )
 }
