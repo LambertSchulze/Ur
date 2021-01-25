@@ -28,30 +28,63 @@ const INITIAL_STATE = {
   board: BOARD_LAYOUT,
   pieces: [],
   player1: {
-    hand: 5,
+    hand: 0,
     finish: 0,
     color: 'white'
   },
   player2: {
-    hand: 5,
+    hand: 0,
     finish: 0,
     color: 'black'
   },
   game: {
-    turn: 'player1',
-    roll: []
+    turn: '',
+    roll: {
+      dice: [0, 0, 0, 0],
+      sum: 0
+    }
   }
 }
 
 const gameReducer = (state = INITIAL_STATE, action) => {
   switch(action.type) {
     case 'NEW_GAME':
-      return INITIAL_STATE
+      return {
+        ...INITIAL_STATE,
+        player1: {
+          ...state.player1,
+          hand: 5
+        },
+        player2: {
+          ...state.player2,
+          hand: 5
+        },
+        game: {
+          roll: {
+            dice: [0, 0, 0, 0],
+            sum: 0
+          },
+          turn: 'player1'
+        }
+      }
+    case 'ROLL_DICE':
+      let roll = [Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random())] 
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          roll: {
+            dice: roll,
+            sum: roll.reduce((a, b) => {return a + b})
+          }
+        }
+      }
     default:
       return state
   }
 }
 
 export const makeNewGame = () => {return {type: 'NEW_GAME'}}
+export const newRoll = () => {return {type: 'ROLL_DICE'}}
 
 export default gameReducer

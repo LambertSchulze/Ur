@@ -1,3 +1,7 @@
+body {
+  background-color: lightgrey;
+}
+
 #Board {
   display: grid;
   grid-template-rows: repeat(3, 100px);
@@ -15,4 +19,8 @@
 
 .flower {
   background-color: green;
+}
+
+.active {
+  border: solid green 3px;
 }

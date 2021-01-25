@@ -1,18 +1,24 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { newRoll } from './../reducers/gameReducer'
 
 const DiceRoll = ({ roll }) => {
-  let dice1, dice2, dice3, dice4
-  
-  if (roll.length === 4) {
-    dice1 = roll[0] === 1 ? 1 : 0
-    dice2 = roll[1] === 1 ? 1 : 0
-    dice3 = roll[2] === 1 ? 1 : 0
-    dice4 = roll[3] === 1 ? 1 : 0
+  const dispatch = useDispatch()
+
+  const rollDice = () => {
+    dispatch(newRoll())
   }
-  else dice1 = dice2 = dice3 = dice4 = ''
 
   return (
-    <div id="DiceRoll">{dice1 + ' ' + dice2 + ' ' + dice3 + ' ' + dice4}</div>
+    <div id="DiceRoll" onClick={rollDice}>
+      <ul>
+        <li>{roll.dice[0]}</li>
+        <li>{roll.dice[1]}</li>
+        <li>{roll.dice[2]}</li>
+        <li>{roll.dice[3]}</li>
+        <li><em>{'= ' + roll.sum}</em></li>
+      </ul>
+    </div>
   )
 }
 
