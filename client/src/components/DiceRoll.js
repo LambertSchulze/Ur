@@ -6,12 +6,12 @@ const DiceRoll = ({ roll, turn }) => {
   const dispatch = useDispatch()
 
   const handleClick = () => {
-    if (turn.includes('roll'))
+    if (turn === 'ROLL')
       dispatch(rollDice())
   }
 
   return (
-    <div id="DiceRoll" onClick={handleClick} className={turn.includes('roll') ? 'active' : ''}>
+    <div id="DiceRoll" onClick={handleClick} className={turn === 'ROLL' ? 'active' : ''}>
       <ul>
         <li>{roll.dice[0]}</li>
         <li>{roll.dice[1]}</li>

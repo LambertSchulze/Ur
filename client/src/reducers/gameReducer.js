@@ -93,25 +93,25 @@ const gameReducer = (state = INITIAL_STATE, action) => {
         pieces: state.pieces.map(p => p !== pieceToMove ? p : movedPiece)
       }
     case 'DRAW_PIECE_FROM_HAND':
-      if (state.players[state.game.activePlayer].hand > 0) {
-        const updatedPlayerHand = state.players[state.game.activePlayer]
-        updatedPlayerHand.hand -= 1
-        console.log('new player object')
-        console.log(updatedPlayerHand)
+      if (state.players[state.game.activePlayer].hand > 0 && state.game.turn === 'MOVE') {
+        const updatedPlayers = state.players
+        updatedPlayers[state.game.activePlayer].hand -= 1
 
         return {
           ...state,
           pieces: [
             ...state.pieces,
             {
-              pos: action.tile,
+              pos: 14,
               player: state.game.activePlayer
             }
           ],
-          players: [
-            ...state.players,
-            state.players[state.game.activePlayer] = updatedPlayerHand
-          ]
+          players: updatedPlayers,
+          game: {
+            ...state.game,
+            activePlayer: nextPlayer(state.game.activePlayer),
+            turn: 'ROLL'
+          }
         }
       }
       else {
@@ -123,12 +123,12 @@ const gameReducer = (state = INITIAL_STATE, action) => {
 }
 
 /* Helpers */
-const nextPlayer = (activePlayer) => activePlayer === 1 ? 1 : 0
+const nextPlayer = (activePlayer) => activePlayer === 1 ? 0 : 1
 
 /* Action creators */
-export const makeNewGame =       () =>               {return {type: 'MAKE_NEW_GAME'}}
-export const rollDice =          () =>               {return {type: 'ROLL_DICE'}}
-export const movePiece =         (piece, newTile) => {return {type: 'MOVE_PIECE', piece: piece, tile: newTile}}
-export const drawPieceFromHand = (newTile) =>        {return {type: 'DRAW_PIECE_FROM_HAND', tile: newTile}}
+export const makeNewGame =       () =>      {return {type: 'MAKE_NEW_GAME'}}
+export const rollDice =          () =>      {return {type: 'ROLL_DICE'}}
+export const movePiece =         (piece) => {return {type: 'MOVE_PIECE', piece: piece}}
+export const drawPieceFromHand = () =>      {return {type: 'DRAW_PIECE_FROM_HAND'}}
 
 export default gameReducer
