@@ -27,18 +27,21 @@ const BOARD_LAYOUT = [
 const INITIAL_STATE = {
   board: BOARD_LAYOUT,
   pieces: [],
-  player1: {
-    hand: 0,
-    finish: 0,
-    color: 'white'
-  },
-  player2: {
-    hand: 0,
-    finish: 0,
-    color: 'black'
-  },
+  players: [
+    {
+      hand: 0,
+      finish: 0,
+      color: 'white'
+    },
+    {
+      hand: 0,
+      finish: 0,
+      color: 'black'
+    }
+  ],
   game: {
-    turn: '',
+    activePlayer: 0,
+    turn: 'ROLL',
     roll: {
       dice: [0, 0, 0, 0],
       sum: 0
@@ -48,54 +51,84 @@ const INITIAL_STATE = {
 
 const gameReducer = (state = INITIAL_STATE, action) => {
   switch(action.type) {
-    case 'NEW_GAME':
+    case 'MAKE_NEW_GAME':
       return {
         ...INITIAL_STATE,
-        player1: {
-          ...state.player1,
-          hand: 5
-        },
-        player2: {
-          ...state.player2,
-          hand: 5
-        },
-        game: {
-          roll: {
-            dice: [0, 0, 0, 0],
-            sum: 0
+        players: [
+          {
+            ...INITIAL_STATE.players[0],
+            hand: 5
           },
-          turn: 'white roll'
+          {
+            ...INITIAL_STATE.players[1],
+            hand: 5
+          }
+        ],
+        game: {
+          ...INITIAL_STATE.game
         }
       }
     case 'ROLL_DICE':
-      let roll = [Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random())] 
+      let roll = [Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random())]
+      let sum = roll.reduce((a, b) => {return a + b})
       return {
         ...state,
         game: {
-          turn: state.game.turn.includes('white') ? 'white move' : 'black move',
+          activePlayer: sum > 0 ? state.game.activePlayer : nextPlayer(state.game.activePlayer),
+          turn: sum > 0 ? 'MOVE' : 'ROLL',
           roll: {
             dice: roll,
-            sum: roll.reduce((a, b) => {return a + b})
+            sum: sum
           }
         }
       }
-    case 'MOVE':
-      const pieceToMove = state.pieces.find(p => p.pos === action.data.piece.pos)
+    case 'MOVE_PIECE':
+      const pieceToMove = state.pieces.find(p => p.pos === action.piece.pos)
       const movedPiece = {
         ...pieceToMove,
-        pos: action.data.tile
+        pos: action.tile
       }
       return {
         ...state,
         pieces: state.pieces.map(p => p !== pieceToMove ? p : movedPiece)
+      }
+    case 'DRAW_PIECE_FROM_HAND':
+      if (state.players[state.game.activePlayer].hand > 0) {
+        const updatedPlayerHand = state.players[state.game.activePlayer]
+        updatedPlayerHand.hand -= 1
+        console.log('new player object')
+        console.log(updatedPlayerHand)
+
+        return {
+          ...state,
+          pieces: [
+            ...state.pieces,
+            {
+              pos: action.tile,
+              player: state.game.activePlayer
+            }
+          ],
+          players: [
+            ...state.players,
+            state.players[state.game.activePlayer] = updatedPlayerHand
+          ]
+        }
+      }
+      else {
+        return state
       }
     default:
       return state
   }
 }
 
-export const makeNewGame = () =>      {return {type: 'NEW_GAME'}}
-export const newRoll =     () =>      {return {type: 'ROLL_DICE'}}
-export const movePiece =   (piece, newTile) => {return {type: 'MOVE', data: {piece: piece, tile: newTile}}}
+/* Helpers */
+const nextPlayer = (activePlayer) => activePlayer === 1 ? 1 : 0
+
+/* Action creators */
+export const makeNewGame =       () =>               {return {type: 'MAKE_NEW_GAME'}}
+export const rollDice =          () =>               {return {type: 'ROLL_DICE'}}
+export const movePiece =         (piece, newTile) => {return {type: 'MOVE_PIECE', piece: piece, tile: newTile}}
+export const drawPieceFromHand = (newTile) =>        {return {type: 'DRAW_PIECE_FROM_HAND', tile: newTile}}
 
 export default gameReducer

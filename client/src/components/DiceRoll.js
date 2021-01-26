@@ -1,17 +1,17 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { newRoll } from './../reducers/gameReducer'
+import { rollDice } from './../reducers/gameReducer'
 
 const DiceRoll = ({ roll, turn }) => {
   const dispatch = useDispatch()
 
-  const rollDice = () => {
+  const handleClick = () => {
     if (turn.includes('roll'))
-      dispatch(newRoll())
+      dispatch(rollDice())
   }
 
   return (
-    <div id="DiceRoll" onClick={rollDice} className={turn.includes('roll') ? 'active' : ''}>
+    <div id="DiceRoll" onClick={handleClick} className={turn.includes('roll') ? 'active' : ''}>
       <ul>
         <li>{roll.dice[0]}</li>
         <li>{roll.dice[1]}</li>
