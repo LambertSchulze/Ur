@@ -2,7 +2,9 @@ import React from 'react'
 
 const Tile = ({ type, piece }) => {
   return (
-    <div className={type}>{piece}</div>
+    <div className={type}>
+      {piece ? (piece.player === 'white' ? '⚪' : '⚫') : ''}
+    </div>
   )
 }
 
