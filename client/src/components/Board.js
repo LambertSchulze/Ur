@@ -20,6 +20,7 @@ const Board = ({ board, pieces }) => {
           return (
             <Tile
               key={tile.pos}
+              position={tile.pos}
               type={tile.type}
               piece={pieceOnTile}
             />)
