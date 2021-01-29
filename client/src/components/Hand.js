@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { drawPieceFromHand } from './../reducers/gameReducer'
 
-const Hand = ({ playerID, player, turn, activePlayer }) => {
+const Hand = ({ playerID, player, turn, activePlayerIndex }) => {
   const dispatch = useDispatch()
 
   const handleClick = () => {
@@ -13,7 +13,7 @@ const Hand = ({ playerID, player, turn, activePlayer }) => {
 
   return (
     <div id={'Hand' + playerID}
-         className={activePlayer === playerID ? 'active' : ''}
+         className={activePlayerIndex === playerID ? 'active' : ''}
          onClick={handleClick}>
       {player.color === 'white' ? '⚪' : '⚫'}: {player.hand}
     </div>

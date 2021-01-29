@@ -16,13 +16,13 @@ const App = () => {
       <Hand playerID={0}
             player={useSelector(state => state.players[0])}
             turn={useSelector(state => state.game.turn)}
-            activePlayer={useSelector(state => state.game.activePlayer)}/>
+            activePlayerIndex={useSelector(state => state.game.activePlayerIndex)}/>
       <Board board={useSelector(state => state.board)}
              pieces={useSelector(state => state.pieces)} />
       <Hand playerID={1}
             player={useSelector(state => state.players[1])}
             turn={useSelector(state => state.game.turn)}
-            activePlayer={useSelector(state => state.game.activePlayer)}/>
+            activePlayerIndex={useSelector(state => state.game.activePlayerIndex)}/>
     </div>
   )
 }
