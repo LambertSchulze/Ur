@@ -50,8 +50,8 @@ const INITIAL_STATE = {
     }
   ],
   game: {
-    activePlayerIndex: 0,
-    turn: 'ROLL',
+    activePlayerIndex: -1,
+    turn: '',
     roll: {
       dice: [0, 0, 0, 0],
       sum: 0
@@ -76,7 +76,9 @@ const gameReducer = (state = INITIAL_STATE, action) => {
           }
         ],
         game: {
-          ...INITIAL_STATE.game
+          ...INITIAL_STATE.game,
+          activePlayerIndex: 0,
+          turn: 'ROLL'
         }
       }
     case 'ROLL_DICE':
