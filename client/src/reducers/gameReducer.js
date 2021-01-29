@@ -1,29 +1,39 @@
 const BOARD_LAYOUT = [
-  {pos: 11, type: 'flower'},
+  {pos: 11, type: 'extra'},
   {pos: 12, type: 'normal'},
   {pos: 13, type: 'normal'},
   {pos: 14, type: 'normal'},
   {pos: 15, type: 'none'},
   {pos: 16, type: 'none'},
-  {pos: 17, type: 'flower'},
+  {pos: 17, type: 'extra'},
   {pos: 18, type: 'normal'},
   {pos: 21, type: 'normal'},
   {pos: 22, type: 'normal'},
   {pos: 23, type: 'normal'},
-  {pos: 24, type: 'flower'},
+  {pos: 24, type: 'extra'},
   {pos: 25, type: 'normal'},
   {pos: 26, type: 'normal'},
   {pos: 27, type: 'normal'},
   {pos: 28, type: 'normal'},
-  {pos: 31, type: 'flower'},
+  {pos: 31, type: 'extra'},
   {pos: 32, type: 'normal'},
   {pos: 33, type: 'normal'},
   {pos: 34, type: 'normal'},
   {pos: 35, type: 'none'},
   {pos: 36, type: 'none'},
-  {pos: 37, type: 'flower'},
+  {pos: 37, type: 'extra'},
   {pos: 38, type: 'normal'}
 ]
+
+const BOARD_PIECE_MOVEMENT = [
+  [
+    'hand', 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28, 18, 17, 'finish'
+  ],
+  [
+    'hand', 34, 33, 32, 31, 21, 22, 23, 24, 25, 26, 27, 28, 38, 37, 'finish'
+  ]
+]
+
 const INITIAL_STATE = {
   board: BOARD_LAYOUT,
   pieces: [],
@@ -40,12 +50,13 @@ const INITIAL_STATE = {
     }
   ],
   game: {
-    activePlayer: 0,
+    activePlayerIndex: 0,
     turn: 'ROLL',
     roll: {
       dice: [0, 0, 0, 0],
       sum: 0
-    }
+    },
+    movement: BOARD_PIECE_MOVEMENT
   }
 }
 
@@ -74,7 +85,8 @@ const gameReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         game: {
-          activePlayer: sum > 0 ? state.game.activePlayer : nextPlayer(state.game.activePlayer),
+          ...state.game,
+          activePlayerIndex: sum > 0 ? state.game.activePlayerIndex : nextPlayer(state.game.activePlayerIndex),
           turn: sum > 0 ? 'MOVE' : 'ROLL',
           roll: {
             dice: roll,
@@ -93,30 +105,34 @@ const gameReducer = (state = INITIAL_STATE, action) => {
         pieces: state.pieces.map(p => p !== pieceToMove ? p : movedPiece)
       }
     case 'DRAW_PIECE_FROM_HAND':
-      if (state.players[state.game.activePlayer].hand > 0 && state.game.turn === 'MOVE') {
-        const updatedPlayers = state.players
-        updatedPlayers[state.game.activePlayer].hand -= 1
+      const activePlayer = state.players[state.game.activePlayerIndex]
+      const tileForNewPiece = state.game.movement[state.game.activePlayerIndex][state.game.roll.sum]
+
+      if (state.game.turn === 'MOVE' &&
+          activePlayer.hand > 0 &&
+          findPieceOnTile(state.pieces, tileForNewPiece) === undefined) {
+
+        const newPlayersState = state.players
+        newPlayersState[state.game.activePlayerIndex].hand -= 1
 
         return {
           ...state,
           pieces: [
             ...state.pieces,
             {
-              pos: 14,
-              player: state.game.activePlayer
+              pos: tileForNewPiece,
+              player: state.game.activePlayerIndex
             }
           ],
-          players: updatedPlayers,
+          players: newPlayersState,
           game: {
             ...state.game,
-            activePlayer: nextPlayer(state.game.activePlayer),
+            activePlayerIndex: isTileExtraRoll(state.board, tileForNewPiece) ? state.game.activePlayerIndex : nextPlayer(state.game.activePlayerIndex),
             turn: 'ROLL'
           }
         }
       }
-      else {
-        return state
-      }
+      return state
     default:
       return state
   }
@@ -124,6 +140,8 @@ const gameReducer = (state = INITIAL_STATE, action) => {
 
 /* Helpers */
 const nextPlayer = (activePlayer) => activePlayer === 1 ? 0 : 1
+const findPieceOnTile = (pieces, tile) => pieces.find(p => p.pos === tile)
+const isTileExtraRoll = (board, tile) => board.find(t => t.pos === tile).type === 'extra'
 
 /* Action creators */
 export const makeNewGame =       () =>      {return {type: 'MAKE_NEW_GAME'}}
