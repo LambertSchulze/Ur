@@ -6,9 +6,7 @@ const Hand = ({ playerID, player, turn, activePlayerIndex }) => {
   const dispatch = useDispatch()
 
   const handleClick = () => {
-    if (turn === 'MOVE') {
-      dispatch(drawPieceFromHand())
-    }
+    dispatch(drawPieceFromHand(playerID))
   }
 
   return (
