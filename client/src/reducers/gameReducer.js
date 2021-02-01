@@ -101,31 +101,40 @@ const gameReducer = (state = INITIAL_STATE, action) => {
       const piece = state.pieces.find(p => p.pos === action.position)
       if (!piece) {
         console.log('no piece on tile')
-        return
+        return state
       }
 
       // is it time to move
       if (state.game.turn !== 'MOVE') {
         console.log('you have to roll first!')
-        return
+        return state
       }
 
       // is it the turn of the player of the piece 
       if (piece.player !== state.game.activePlayerIndex) {
         console.log('this is not your piece')
-        return
+        return state
       }
 
       // on which tile would the piece land with the roll
-      const targetTile = state.game.movement[state.game.activePlayerIndex][state.game.roll.sum]
-      console.log('this piece would land on tile ' + targetTile)
 
-      // is that move legal
-      const targetPiece = state.piece.find(p => p.pos === targetTile)
-      if (targetTile === undefined ||       // piece goes further than finish
-          targetPiece.player === state.game.activePlayerIndex) { // tile already taken by own piece
-        console.log('ilegal move')
-        return
+      // calculating target tile
+      const indexOfPosition = state.game.movement[state.game.activePlayerIndex].findIndex(e => e === action.position)
+      let targetTile = state.game.movement[state.game.activePlayerIndex][indexOfPosition + state.game.roll.sum]
+
+      // out of bounds?
+      if (targetTile === undefined) {
+        console.log('you have to get over the finish line with the right roll')
+        return state
+      } else {
+        console.log('this piece would land on tile ' + targetTile)
+      }
+
+      // tile already taken by own piece
+      const targetPiece = state.pieces.find(p => p.pos === targetTile)
+      if (targetPiece !== undefined && targetPiece.player === state.game.activePlayerIndex) {
+        console.log('you already have a piece on that tile')
+        return state
       }
 
       /* if everything is ok and the move can take place, create the new state in little bits:
