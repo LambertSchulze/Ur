@@ -81,14 +81,17 @@ const gameReducer = (state = INITIAL_STATE, action) => {
           turn: 'ROLL'
         }
       }
+
     case 'ROLL_DICE':
       let roll = [Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random()), Math.round(Math.random())]
-      let sum = roll.reduce((a, b) => {return a + b})
+      let sum = roll.reduce((a, b) => a + b)
+      if (sum < 1) console.log('you rolled a 0')
+
       return {
         ...state,
         game: {
           ...state.game,
-          activePlayerIndex: sum > 0 ? state.game.activePlayerIndex : nextPlayer(state.game.activePlayerIndex),
+          activePlayerIndex: sum > 0 ? state.game.activePlayerIndex : nextPlayer(state),
           turn: sum > 0 ? 'MOVE' : 'ROLL',
           roll: {
             dice: roll,
@@ -96,73 +99,131 @@ const gameReducer = (state = INITIAL_STATE, action) => {
           }
         }
       }
-    case 'MOVE_PIECE':
-      // find if piece is on the given tile
-      const piece = state.pieces.find(p => p.pos === action.position)
-      if (!piece) {
-        console.log('no piece on tile')
-        return state
-      }
 
-      // is it time to move
+    case 'MOVE_PIECE':
+      // is it time to move?
       if (state.game.turn !== 'MOVE') {
         console.log('you have to roll first!')
         return state
       }
 
-      // is it the turn of the player of the piece 
+      const tileId = action.tileId
+      const idOfTileInMovement = state.game.movement[state.game.activePlayerIndex].findIndex(e => e === tileId)
+      const targetTileId = state.game.movement[state.game.activePlayerIndex][idOfTileInMovement + state.game.roll.sum]
+
+      // case: piece lands on finish
+      if (targetTileId === 'finish') {
+        let newPlayersState = state.players
+        newPlayersState[state.game.activePlayerIndex].finish++
+
+        // check for game over
+        if (state.players[0].finish === 5) {
+          console.log('player ' + state.players[0].color + ' wins!')
+          return INITIAL_STATE
+        }
+        else if (state.players[1].finish === 5) {
+          console.log('player ' + state.players[1].color + ' wins!')
+          return INITIAL_STATE
+        }
+
+        return {
+          ...state,
+          pieces: state.pieces.filter(p => p.pos !== tileId),
+          players: newPlayersState,
+          game: mapStateToNextPlayer(state)
+        }
+      }
+
+      // out of bounds?
+      if (targetTileId === undefined) {
+        console.log('you have to get over the finish line with the right roll')
+        return state
+      }
+
+      const piece = findPieceOnTile(state, tileId)
+
+      // is there even a piece on the tile?
+      if (!piece) {
+        console.log('click on a piece you want to move')
+        return state
+      }
+
+      // did active player click on his own piece?
       if (piece.player !== state.game.activePlayerIndex) {
         console.log('this is not your piece')
         return state
       }
 
-      // on which tile would the piece land with the roll
+      const pieceOnTarget = findPieceOnTile(state, targetTileId)
 
-      // calculating target tile
-      const indexOfPosition = state.game.movement[state.game.activePlayerIndex].findIndex(e => e === action.position)
-      let targetTile = state.game.movement[state.game.activePlayerIndex][indexOfPosition + state.game.roll.sum]
-
-      // out of bounds?
-      if (targetTile === undefined) {
-        console.log('you have to get over the finish line with the right roll')
-        return state
-      } else {
-        console.log('this piece would land on tile ' + targetTile)
-      }
-
-      // tile already taken by own piece
-      const targetPiece = state.pieces.find(p => p.pos === targetTile)
-      if (targetPiece !== undefined && targetPiece.player === state.game.activePlayerIndex) {
-        console.log('you already have a piece on that tile')
+      // tile already taken by own piece?
+      if (pieceOnTarget !== undefined && pieceOnTarget.player === state.game.activePlayerIndex) {
+        console.log("you can't have two pieces on one tile")
         return state
       }
 
-      
+      // target tile is extra roll but tile is taken?
+      if (isTileExtraRoll(state, targetTileId) && pieceOnTarget) {
+        console.log('pieces on these tiles are safe')
+        return state
+      }
+
+      // is there a possible move for the player?
+      const playerPieces = state.pieces.filter(p => p.player === state.game.activePlayerIndex)
+      playerPieces.push({pos: 'hand'})
+      console.log(playerPieces)
+      playerPieces.forEach(p => {
+        const tileId = p.pos
+        const idOfTileInMovement = state.game.movement[state.game.activePlayerIndex].findIndex(e => e === tileId)
+        const targetTileId = state.game.movement[state.game.activePlayerIndex][idOfTileInMovement + state.game.roll.sum]
+        const pieceOnTarget = findPieceOnTile(state, targetTileId)
+
+        // is out of bounds?
+        if (targetTileId === undefined) return
+        // is own piece on tile?
+        else if (pieceOnTarget !== undefined && pieceOnTarget.player === state.game.activePlayerIndex) return
+        // is taken extra tile?
+        else if (isTileExtraRoll(state, targetTileId) && pieceOnTarget) return
+        // some move must be possible
+        else return p
+      })
+      console.log('possible moves:')
+      console.log(playerPieces)
+      if (playerPieces.length < 1) {
+        console.log('no possible moves')
+        return {
+          ...state,
+          game: mapStateToNextPlayer(state)
+        }
+      }
+
+      // update player hand if piece was captured
+      let newPlayersState = state.players
+      if (pieceOnTarget && pieceOnTarget.player === nextPlayer(state)) {
+        newPlayersState[nextPlayer(state)].hand++
+      }
 
       return {
         ...state,
-        game: isTileExtraRoll(state, action.position) ? mapStateToSamePlayer(state) : mapStateToNextPlayerTurn(state),
+        game: isTileExtraRoll(state, targetTileId) ? mapStateToSamePlayer(state) : mapStateToNextPlayer(state),
         pieces: [
-          ...state.pieces.filter(p => p.pos !== action.position && p.pos !== targetTile),
+          ...state.pieces.filter(p => p.pos !== tileId && p.pos !== targetTileId),
           {
-            pos: targetTile,
+            pos: targetTileId,
             player: state.game.activePlayerIndex
           }
-        ]
-        /* TODO update player hands */
+        ],
+        players: newPlayersState
       }
 
-      
-
-      
     case 'DRAW_PIECE_FROM_HAND':
       const activePlayer = state.players[state.game.activePlayerIndex]
       const tileForNewPiece = state.game.movement[state.game.activePlayerIndex][state.game.roll.sum]
 
-      if (action.playerID === state.game.activePlayerIndex &&
+      if (action.playerId === state.game.activePlayerIndex &&
           state.game.turn === 'MOVE' &&
           activePlayer.hand > 0 &&
-          findPieceOnTile(state.pieces, tileForNewPiece) === undefined) {
+          findPieceOnTile(state, tileForNewPiece) === undefined) {
 
         const newPlayersState = state.players
         newPlayersState[state.game.activePlayerIndex].hand--
@@ -177,28 +238,24 @@ const gameReducer = (state = INITIAL_STATE, action) => {
             }
           ],
           players: newPlayersState,
-          game: isTileExtraRoll(state, tileForNewPiece) ? mapStateToSamePlayer(state) : mapStateToNextPlayerTurn(state)
+          game: isTileExtraRoll(state, tileForNewPiece) ? mapStateToSamePlayer(state) : mapStateToNextPlayer(state)
         }
       }
       return state
+
     default:
       return state
   }
 }
 
 /* Helpers */
-const nextPlayer = (activePlayer) => !activePlayer ? 1 : 0
-const findPieceOnTile = (pieces, tile) => pieces.find(p => p.pos === tile)
-const isTileExtraRoll = (state, tilePos) => {
-  if (tilePos === undefined || tilePos === Object) console.log('something went wrong')
-
-  const tile = state.board.find(t => t.pos === tilePos)
-  return tile.type === 'extra'
-}
-const mapStateToNextPlayerTurn = (state) => {
+const nextPlayer = (state) => !state.game.activePlayerIndex ? 1 : 0
+const findPieceOnTile = (state, tilePos) => state.pieces.find(p => p.pos === tilePos)
+const isTileExtraRoll = (state, tilePos) => state.board.find(t => t.pos === tilePos).type === 'extra'
+const mapStateToNextPlayer = (state) => {
   return {
     ...state.game,
-    activePlayerIndex: nextPlayer(state.game.activePlayerIndex),
+    activePlayerIndex: nextPlayer(state),
     turn: 'ROLL',
   }
 }
@@ -212,7 +269,7 @@ const mapStateToSamePlayer = (state) => {
 /* Action creators */
 export const makeNewGame =       () =>         {return {type: 'MAKE_NEW_GAME'}}
 export const rollDice =          () =>         {return {type: 'ROLL_DICE'}}
-export const movePiece =         (position) => {return {type: 'MOVE_PIECE', position: position}}
-export const drawPieceFromHand = (playerID) => {return {type: 'DRAW_PIECE_FROM_HAND', playerID: playerID}}
+export const movePiece =         (tileId) => {return {type: 'MOVE_PIECE', tileId: tileId}}
+export const drawPieceFromHand = (playerId) => {return {type: 'DRAW_PIECE_FROM_HAND', playerId: playerId}}
 
 export default gameReducer
