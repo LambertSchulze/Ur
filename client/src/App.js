@@ -11,10 +11,18 @@ const App = () => {
     <div>
       <h1>The Game of Ur</h1>
       <MainMenu />
-      <DiceRoll roll={useSelector(state => state.game.roll)} />
-      <Hand player={useSelector(state => state.player1)} />
-      <Board boardState={useSelector(state => state)} />
-      <Hand player={useSelector(state => state.player2)} />
+      <DiceRoll roll={useSelector(state => state.game.roll)}
+                turn={useSelector(state => state.game.turn)} />
+      <Hand playerID={0}
+            player={useSelector(state => state.players[0])}
+            turn={useSelector(state => state.game.turn)}
+            activePlayerIndex={useSelector(state => state.game.activePlayerIndex)}/>
+      <Board board={useSelector(state => state.board)}
+             pieces={useSelector(state => state.pieces)} />
+      <Hand playerID={1}
+            player={useSelector(state => state.players[1])}
+            turn={useSelector(state => state.game.turn)}
+            activePlayerIndex={useSelector(state => state.game.activePlayerIndex)}/>
     </div>
   )
 }

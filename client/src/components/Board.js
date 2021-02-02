@@ -1,18 +1,30 @@
 import React from 'react'
 import Tile from './Tile'
 
-const Board = ({ boardState }) => {
+const Board = ({ board, pieces }) => {
+  const getPieceForTile = (tile) => {
+    let piece = pieces.find(p => p.pos === tile.pos)
+    if (!!piece) {
+      return piece.player === 0 ? '⚪' : '⚫'
+    } else {
+      return ''
+    }
+
+  }
+
   return (
     <div id='Board'>
       {
-        boardState.board.map(tile =>
-          <Tile
-            key={tile.pos}
-            type={tile.type}
-            piece={boardState.pieces.find(piece => piece.pos === tile.pos) ?
-                   boardState.pieces.find(piece => piece.pos === tile.pos).player : ''}
-          />
-        )
+        board.map(tile => {
+          const pieceOnTile = getPieceForTile(tile)
+          return (
+            <Tile
+              key={tile.pos}
+              position={tile.pos}
+              type={tile.type}
+              piece={pieceOnTile}
+            />)
+        })
       }
     </div>    
   )

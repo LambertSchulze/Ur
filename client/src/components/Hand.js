@@ -1,8 +1,20 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { drawPieceFromHand } from './../reducers/gameReducer'
 
-const Hand = ({ player }) => {
+const Hand = ({ playerID, player, turn, activePlayerIndex }) => {
+  const dispatch = useDispatch()
+
+  const handleClick = () => {
+    dispatch(drawPieceFromHand(playerID))
+  }
+
   return (
-    <div id={'Hand' + player.color.toUpperCase()}>{player.color}: {player.hand}</div>
+    <div id={'Hand' + playerID}
+         className={activePlayerIndex === playerID ? 'active' : ''}
+         onClick={handleClick}>
+      {player.color === 'white' ? '⚪' : '⚫'}: {player.hand}
+    </div>
   )
 }
 
