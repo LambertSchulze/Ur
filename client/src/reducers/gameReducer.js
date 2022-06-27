@@ -269,7 +269,7 @@ const mapStateToSamePlayer = (state) => {
 /* Action creators */
 export const makeNewGame =       () =>         {return {type: 'MAKE_NEW_GAME'}}
 export const rollDice =          () =>         {return {type: 'ROLL_DICE'}}
-export const movePiece =         (tileId) => {return {type: 'MOVE_PIECE', tileId: tileId}}
+export const movePiece =         (tileId) =>   {return {type: 'MOVE_PIECE', tileId: tileId}}
 export const drawPieceFromHand = (playerId) => {return {type: 'DRAW_PIECE_FROM_HAND', playerId: playerId}}
 
 export default gameReducer
